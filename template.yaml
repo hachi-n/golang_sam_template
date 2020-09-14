@@ -1,0 +1,43 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  app
+  
+  Sample SAM Template for app
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 5
+
+Resources:
+#  SampleLayer:
+#    Type: AWS::Serverless::LayerVersion
+#    Properties:
+#      LayerName: sample-layer
+#      ContentUri: dependencies/
+  SamTemplateFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: sam template description 
+      FunctionName: sam_template
+      CodeUri: cli/sam_template
+      Handler: sam_template
+      Runtime: go1.x
+      MemorySize: 128
+      Timeout: 30
+#      Layers:
+#        - !Ref SampleLayer
+      Events:
+        Timer:
+          Type: Schedule
+          Properties:
+            Enabled: false
+            Schedule: cron(0 0 * * ? *)
+Outputs:
+  SamTemplateFunction:
+    Description: "First Lambda Function ARN"
+    Value: !GetAtt SamTemplateFunction.Arn
+  SamTempateFunctionIamRole:
+    Description: "Implicit IAM Role created for Hello World function"
+    Value: !GetAtt SamTempateFunctionRole.Arn
