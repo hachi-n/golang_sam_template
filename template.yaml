@@ -11,33 +11,36 @@ Globals:
     Timeout: 5
 
 Resources:
-#  SampleLayer:
-#    Type: AWS::Serverless::LayerVersion
-#    Properties:
-#      LayerName: sample-layer
-#      ContentUri: dependencies/
-  SamTemplateFunction:
+  BinaryLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: binary-layer
+      ContentUri: layers/binary
+  AppNameFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Description: sam template description 
-      FunctionName: sam_template
-      CodeUri: cli/sam_template
-      Handler: sam_template
+      Description: app description.
+      FunctionName: golang_sam_template_function
+      CodeUri: functions/app
+      Handler: app
       Runtime: go1.x
-      MemorySize: 128
-      Timeout: 30
-#      Layers:
-#        - !Ref SampleLayer
+      MemorySize: 256
+      Timeout: 60
+      Layers:
+        - !Ref BinaryLayer
       Events:
         Timer:
           Type: Schedule
           Properties:
-            Enabled: false
-            Schedule: cron(0 0 * * ? *)
+            Enabled: true
+            Schedule: cron(0/30 * * * ? *)
+      Environment:
+        Variables:
+          APP_ENV: "production"
 Outputs:
-  SamTemplateFunction:
+  AppNameFunction:
     Description: "First Lambda Function ARN"
-    Value: !GetAtt SamTemplateFunction.Arn
-  SamTempateFunctionIamRole:
+    Value: !GetAtt AppNameFunction.Arn
+  AppNameFunctionIamRole:
     Description: "Implicit IAM Role created for Hello World function"
-    Value: !GetAtt SamTempateFunctionRole.Arn
+    Value: !GetAtt AppNameFunctionRole.Arn

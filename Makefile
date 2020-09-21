@@ -6,28 +6,29 @@ export AWS_DEFAULT_REGION=ap-northeast-1
 build:
 	sam build
 test:
-	sam local invoke SamTempateFunction
+	sam local invoke
 validate:
-	sam validate --profile api_user
+	sam validate --profile ${ProfileName}
 
 package: 
 	sam package \
 	    --template-file template.yaml \
-	    --s3-bucket ${YOUR_S3_BUCKET} \
+	    --s3-bucket ${S3_BucketName} \
 	    --output-template-file packaged.yaml \
-	    --profile ${YOUR_PROFILE} 
+	    --profile ${ProfileName}
 
 deploy: 
 	sam deploy \
-	    --profile ${YOUR_PROFILE} \
+	    --profile ${ProfileName} \
 	    --region ap-northeast-1  \
 	    --template-file ./packaged.yaml \
-	    --stack-name sam-template-stack \
+	    --stack-name ${CloudFormationStackName} \
 	    --capabilities CAPABILITY_IAM \
-	    --parameter-overrides IdentityNameParameter=sample
+	    --parameter-overrides IdentityNameParameter=${IdentityParameter}
 all: 
 	$(MAKE) build
-	$(MAKE) test
 	$(MAKE) validate
 	$(MAKE) package
 	$(MAKE) deploy
+
+
